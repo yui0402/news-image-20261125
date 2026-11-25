@@ -1,19 +1,20 @@
 #!/usr/bin/env python3
-"""Entrypoint: copy entry.png to the make.fun output directory.
+"""news-image-20261125 entry program: deliver entry.png as the output.
 
-Standard library only. Reads MAKEFUN_OUTPUT_DIR, defaults to "out".
+The Vice City front page is drawn by generate_image.py at build time;
+this program only copies the finished PNG to the output directory,
+using nothing outside the Python standard library.
 """
+
 import os
 import shutil
+from pathlib import Path
 
+HERE = Path(__file__).resolve().parent
+TARGET = Path(os.environ.get("MAKEFUN_OUTPUT_DIR", "/output"))
+SOURCE = HERE / "entry.png"
 
-def main():
-    out_dir = os.environ.get("MAKEFUN_OUTPUT_DIR", "out")
-    os.makedirs(out_dir, exist_ok=True)
-    here = os.path.dirname(os.path.abspath(__file__))
-    shutil.copyfile(os.path.join(here, "entry.png"),
-                    os.path.join(out_dir, "entry.png"))
-
-
-if __name__ == "__main__":
-    main()
+TARGET.mkdir(parents=True, exist_ok=True)
+assert SOURCE.is_file(), "entry.png missing beside main.py"
+shutil.copyfile(SOURCE, TARGET / "entry.png")
+print("entry.png ->", TARGET / "entry.png")
